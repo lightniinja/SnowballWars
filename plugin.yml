@@ -1,0 +1,14 @@
+name: SnowballWars
+version: 1.0
+author: lightniinja
+main: com.lightniinja.snowballwars.SBWPlugin
+commands:
+  swadmin:
+    usage: /swadmin help
+    description: Administrate SnowballWars.
+    permission: snowballwars.admin
+    permission-message: You do not have permission to do that!
+permissions:
+  snowballwars.admin:
+    default: op
+    description: Administrate SnowballWars.
