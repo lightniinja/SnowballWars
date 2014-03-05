@@ -1,1 +1,12 @@
 lives: 1
+snowballs: 1
+host: localhost
+port: 3306
+user: root
+pass: "" 
+## "" for no password
+name: database
+usedb: true
+rewards: true
+rewardType: 0
+money: 500

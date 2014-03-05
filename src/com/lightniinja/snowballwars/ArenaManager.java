@@ -75,7 +75,7 @@ public class ArenaManager {
 		a.addLives(p.getName(), SBWPlugin.lives);
 		p.teleport(a.getNextSpawn());
 		a.getUsedSpawns().put(p.getName(), a.getNextSpawn());
-		p.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 1));
+		p.getInventory().addItem(new ItemStack(Material.SNOW_BALL, SBWPlugin.snowballs));
 		ItemStack item = new ItemStack(Material.PAPER, 1);
 		ItemMeta m = item.getItemMeta();
 		m.setDisplayName(ChatColor.YELLOW + "Leave Arena");

@@ -1,6 +1,7 @@
 package com.lightniinja.snowballwars;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.List;
 
 public class Arena {
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private List<String> voted = new ArrayList();
 	private int id = 0;
 	private List<Location> spawns = new ArrayList<Location>();
 	private List<String> players = new ArrayList<String>();
@@ -17,6 +20,7 @@ public class Arena {
 	private HashMap<String, Integer> lives = new HashMap<String, Integer>();
 	private ScoreboardAPI sbapi = new ScoreboardAPI();
 	protected boolean gameOver;
+	private int votes = 0;
 	
 	public Arena(List<Location> list, int id) {
 		this.spawns = list;
@@ -26,6 +30,13 @@ public class Arena {
 	public int getTime() {
 		return this.time;
 	}
+	public void addVote(Player p) {
+	    this.votes += 1;
+	    this.voted.add(p.getName());
+	  }
+	  public int getVotes() {
+	    return this.votes;
+	  }
 	public void setTime(int i) {
 		this.time = i;
 	}
@@ -89,4 +100,13 @@ public class Arena {
 	public void removeLives(String name) {
 		this.lives.remove(name);
 	}
+	
+	public boolean hasVoted(Player p) {
+	    return this.voted.contains(p.getName());
+	  }
+
+	  public void clearVotes() {
+	    this.voted.clear();
+	    this.votes = 0;
+	  }
 }

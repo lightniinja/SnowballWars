@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class CommandAdmin implements CommandExecutor {
 	private SBWPlugin pl = null;
@@ -36,6 +37,7 @@ public class CommandAdmin implements CommandExecutor {
 				p.sendMessage("/swadmin cancel - clear current spawns");
 				p.sendMessage("/swadmin remove id - remove arena id [/arenas/arena%id%.yml]");
 				p.sendMessage("/swadmin help - show help");
+				p.sendMessage("/swadmin setreward [money] - set rewards.");
 			} else if(args[0].equalsIgnoreCase("create")) {
 				p.sendMessage(ChatColor.GREEN + "/swadmin addspawn for spawns, /swadmin save");
 			} else if(args[0].equalsIgnoreCase("addspawn")) {
@@ -57,6 +59,15 @@ public class CommandAdmin implements CommandExecutor {
 			} else if(args[0].equalsIgnoreCase("cancel")) {
 				spawns.remove(p.getName());
 				p.sendMessage(ChatColor.GREEN + "Cleared spawns");
+			} else if(args[0].equalsIgnoreCase("setrewards")) {
+				this.pl.getConfig().set("rewards", "true");
+				this.pl.getConfig().set("rewardType", "1");
+				List<ItemStack> items = new ArrayList<ItemStack>();
+				for(ItemStack is: p.getInventory().getContents()) {
+					items.add(is);
+				}
+				this.pl.getConfig().set("items", items);
+				this.pl.saveConfig();
 			} else {
 				sender.sendMessage(ChatColor.RED + "Command not found!");
 				return false;
@@ -66,6 +77,11 @@ public class CommandAdmin implements CommandExecutor {
 				File f = new File(this.pl.getDataFolder() + "/arenas/arena" + args[1] + ".yml");
 				f.delete();
 				p.sendMessage(ChatColor.GREEN + "Arena removed!");
+			} else if(args[0].equalsIgnoreCase("setrewards")) {
+				this.pl.getConfig().set("rewards", "true");
+				this.pl.getConfig().set("rewardType", 0);
+				this.pl.getConfig().set("money", args[1]);
+				this.pl.saveConfig();
 			} else {
 				sender.sendMessage(ChatColor.RED + "Command not found!");
 				return false;

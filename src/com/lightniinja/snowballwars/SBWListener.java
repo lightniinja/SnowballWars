@@ -11,6 +11,7 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -56,15 +58,31 @@ public class SBWListener implements Listener {
 				((Player)s.getShooter()).playSound(s.getShooter().getLocation(), Sound.ENDERDRAGON_HIT, 1.0F, 1.0F);
 				if(ArenaManager.getManager().getArena(p).getLives(p.getName()) == 1) {
 					ArenaManager.getManager().removePlayer(p);
+					if(SBWPlugin.cfg.getBoolean("usedb")) {
+						new DatabaseMan().update("UPDATE `scores` SET `deaths`=`deaths`+1 WHERE `username`='" + p.getName() +"'");
+						new DatabaseMan().update("UPDATE `scores` SET `losses`=`losses`+1 WHERE `username`='" + p.getName() +"'");
+						new DatabaseMan().update("UPDATE `scores` SET `kills`=`kills`+1 WHERE `username`='" + ((Player)s.getShooter()).getName() +"'");
+					}
 				} else {
 					ArenaManager.getManager().getArena(p).setLives(p.getName(), ArenaManager.getManager().getArena(p).getLives(p.getName()) - 1);
 					p.teleport(ArenaManager.getManager().getArena(p).getUsedSpawns().get(p.getName()));
+					if(SBWPlugin.cfg.getBoolean("usedb")) {
+
+						new DatabaseMan().update("UPDATE `scores` SET `deaths`=`deaths`+1 WHERE `username`='" + p.getName() +"'");
+						new DatabaseMan().update("UPDATE `scores` SET `kills`=`kills`+1 WHERE `username`='" + ((Player)s.getShooter()).getName() +"'");
+					}
 				}
 			}
 		} else {
-			e.setCancelled(true);
+			if(e.getEntity().getType() == EntityType.PLAYER) {
+				Player p =  (Player)e.getEntity();
+				if(ArenaManager.getManager().getArena(p) != null) {
+					e.setCancelled(true);
+				}
+			}
 		}
 	}
+	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent e) {
 		if(!(e.getEntity() instanceof Player)) {
@@ -171,6 +189,12 @@ public class SBWListener implements Listener {
 		if(ArenaManager.getManager().getArena(e.getPlayer()) != null) {
 			e.setCancelled(true);
 		}
+	}
+	@EventHandler
+	public void onJoin(PlayerJoinEvent e) {
+			if(SBWPlugin.cfg.getBoolean("usedb")) {
+				new DatabaseMan().update("INSERT INTO `scores` (`id`, `username`, `wins`, `losses`, `kills`, `deaths`) VALUES (NULL, '" + e.getPlayer().getName() + "', '0', '0', '0', '0');");
+			}
 	}
 	@EventHandler
 	public void onEggLand(ProjectileHitEvent e) {
